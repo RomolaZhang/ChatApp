@@ -1,0 +1,100 @@
+html, body{
+    font-family: "Lato";
+    margin: 30px;
+}
+
+textarea, select, input, button { outline: none; }
+
+input{
+    border: none;
+    border-bottom: solid 1px #999999;
+    font-size: medium;
+    padding: 5px;
+}
+
+input[type=submit], button{
+    margin-left: 20px;
+    border: none;
+    color: white;
+    background-color: #3A8FB7;
+    padding: 6px 10px;
+    border-radius: 2px;
+    font-size: small;
+    cursor: pointer;
+}
+
+#logout{
+    position: fixed;
+    right: 20px;
+    top: 20px;
+}
+
+.title{
+    font-weight: 700;
+    color: #3A8FB7;
+    font-size: xx-large;
+    margin-bottom: 30px;
+}
+
+.home{
+    margin-top: 15%;
+}
+
+.box{
+    text-align: center;
+}
+
+.prompt{
+    color: coral;
+}
+
+.container{
+    margin-top: 40px;
+    display: flex;
+    flex-direction: row;
+}
+
+.conversation{
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    justify-content: space-between;
+}
+
+.userList{
+    width: 30%;
+}
+
+#users{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.user{
+    width: 30%;
+    cursor: pointer;
+    padding: 10px;
+    margin-top: 10px;
+    border-bottom: 1px #3A8FB7 solid;
+}
+
+#messages{
+    min-height: 250px;
+    box-shadow: 2px 5px 15px 0px rgba(170,170,170,0.7);
+    background-color: #eeeeee;
+    padding: 20px;
+    text-align: left;
+}
+
+.message{
+    padding: 5px;
+}
+
+.sendBar{
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: flex-end;
+}

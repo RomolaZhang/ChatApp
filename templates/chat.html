@@ -1,0 +1,87 @@
+<html>
+    <head>
+        <title>Chat Room</title>
+        <link rel="stylesheet" href="{{ url_for('static',filename='style.css')}}">
+        <link href="https://fonts.googleapis.com/css?family=Lato:300,300i,400,400i,700,700i&display=swap" rel="stylesheet">
+    </head>
+    <body class="box">
+        <button id="logout">Log out</button>
+        <div class="title">Chat Room</div>
+        <p>This is the chatroom for {{username}}.</p>
+        <div class="container">
+            <div class="userList">
+                <div class="subtitle">Active Users</div>
+                <div id="users">
+
+                </div>
+            </div>
+            <div class="conversation">
+                <div id="messages"></div>
+                <div class="sendBar">
+                    <input type="text" placeholder="ender your message" id="myMessage">
+                    <button id="send">Send</button>
+                </div>
+            </div>
+        </div>
+        
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+
+    <script>
+        $(document).ready(function(){
+            var socket = io.connect('http://' + document.domain + ':' + location.port, {
+'sync disconnect on unload': true });
+
+            //get active users
+            setInterval(function(){ 
+                socket.emit('userList');
+            }, 1000);
+
+            socket.on('connect', function() {
+                socket.emit('initRoom');
+            });
+
+            socket.on('activeUsers', function(result){
+                $('#users').empty();
+                $.each(result.users, function(index, value){
+                    var newItem = $('<div class="user" name="' + value +'">'  + value + '</div>').on('click', function(){
+                        var chosenUser = $(this).attr('name');
+                        console.log("here");
+                        socket.emit('join', chosenUser);
+                    })
+                    $('#users').append(newItem);
+                });
+            });
+
+            socket.on('userGone', function(data){
+                alert(data + " is already gone.");
+            })
+
+            socket.on('roomFull', function(){
+                alert("This room is full, please select another one.");
+            })
+
+            socket.on('update', function(data) {
+                $('#messages').empty();
+            });
+
+            socket.on('message', function(data){
+                $('#messages').append('<div class="message">' + data.msg +'</div>');
+            });
+
+            $('#send').on('click', function(){
+                text = $('#myMessage').val();
+                $('#myMessage').val('');
+                socket.emit('text', {msg: text});
+            });
+
+            $('#logout').on('click', function(){     
+                socket.disconnect();
+                window.location.href = "/";
+            })
+        })
+
+    </script>
+    </body>
+
+</html>

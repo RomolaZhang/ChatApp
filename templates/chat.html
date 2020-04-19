@@ -37,10 +37,13 @@
                 socket.emit('userList');
             }, 1000);
 
+            //when connected to the socket, emit initRoom to the server
             socket.on('connect', function() {
                 socket.emit('initRoom');
             });
 
+
+            //periodically ask for active users and generates user elements
             socket.on('activeUsers', function(result){
                 $('#users').empty();
                 $.each(result.users, function(index, value){
@@ -65,10 +68,12 @@
                 $('#messages').empty();
             });
 
+            //when receiving messages, generate html elements
             socket.on('message', function(data){
                 $('#messages').append('<div class="message">' + data.msg +'</div>');
             });
 
+            //when send button is clicked, emit text event with the message data to the server
             $('#send').on('click', function(){
                 text = $('#myMessage').val();
                 $('#myMessage').val('');

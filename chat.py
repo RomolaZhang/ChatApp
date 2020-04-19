@@ -8,10 +8,12 @@ socketio = SocketIO(app)
 users = {}
 groups = {}
 
+#route index page
 @app.route('/')
 def hello():
     return render_template('index.html')
 
+#route chat page
 @app.route('/chat')
 def chat():
     username = session.get('username')
@@ -20,6 +22,7 @@ def chat():
     else:
         return render_template('chat.html', username=username)
 
+#login request form handler
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     username = request.form['username']
@@ -34,6 +37,8 @@ def login():
         error = 'This username is already taken.'
         return render_template('index.html', error=error)
 
+#socketio userList event handler
+#emit the active users in a list to the client
 @socketio.on('userList')
 def sendUsers():
     otherUsers = []
@@ -42,10 +47,19 @@ def sendUsers():
             otherUsers.append(user)
     emit('activeUsers', {"users": otherUsers} )
 
+#socketio initRoom event handler
+#put the new user who just logged in into its own room
 @socketio.on('initRoom')
 def initRoom():
     join_room(session['room'])
 
+#socketio join event handler
+#check if the chosen user is still active
+#check if the room is full
+#get the client out of its old room and into this new room (new room id = room id of chosen user)
+#emit a message to users in old room about this user leaving the old room
+#emit a message to users in this chosen room about this user entering this room
+#this update event clears this user's conversation window
 @socketio.on('join')
 def joinUser(chosenUser):
     if chosenUser not in users.keys():
@@ -79,11 +93,15 @@ def joinUser(chosenUser):
             emit('update')
             emit('message', {'msg': msg}, room=room)
 
+#send this message from the clients to all users in its room
 @socketio.on('text')
 def text(message):
     room = session['room']
     emit('message', {'msg': session['username'] + ': ' + message['msg']}, room=room)
 
+#get the client out of its room
+#inform the other users in that room
+#delete the user information
 @socketio.on('disconnect')
 def disconnect():
     room = session.get('room')
